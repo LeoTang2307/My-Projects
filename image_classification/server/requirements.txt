@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+tensorflow
+opencv-python
+PyWavelets
+numpy
+joblib
+opencv-contrib-python
+h5py
