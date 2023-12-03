@@ -33,8 +33,8 @@ export default function Page() {
     <div className="flex w-full justify-evenly">
       <form className="w-fit" onSubmit={onClassify}>
         <div className="bg-white rounded-xl p-4">
-          <p htmlFor="comments" className="mb-3 text-2xl font-semibold">Text Classifier</p>
-          <textarea id="comments" onChange={handleInputChange} className="w-96 h-56 pl-2 outline rounded-xl shadow-xl focus-within:font-bold focus-within:pl-2"></textarea><br></br>
+          <label htmlFor="comments" className="mb-3 text-2xl font-semibold">Text Classifier</label><br></br>
+          <textarea id="comments" onChange={handleInputChange} className="w-96 h-56 pl-2 outline rounded-xl shadow-xl focus-within:font-bold focus-within:pl-2" required></textarea><br></br>
         </div>
         <div className="text-right mt-2">
           <button type="reset" onClick={event => setIsToxic()} className="bg-red-500 text-white w-20 p-2 mr-1 rounded-lg shadow-xl">Clear</button>
