@@ -1,75 +1,87 @@
-import React from 'react'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import axios from 'axios'
 import './assets/global.css'
 
 function App() {
-  const [city, setCity] = useState()
-  const [city_cols, setCityCols] = useState([])
-  const [bed, setBed] = useState()
-  const [bath, setBath] = useState()
-  const [house_size, setHouseSize] = useState()
-  const [land_size, setLandSize] = useState()
-  const [price, setPrice] = useState('')
+  const [inputs, setInputs] = useState({})
 
-  useEffect(() => {
-    axios.get('http://localhost:8000/get_cities')
-    .then(res => setCityCols(res.data))
-    .catch(err => console.log(err))
-  })
-
-  function handleSubmit(e) {
-    e.preventDefault()
-    axios.post('http://localhost:8000/price_estimate', null, {params: {
-      city: city,
-      bath: bath,
-      bed: bed,
-      house_size: house_size,
-      land_size: land_size
-    }})
-    .then(res => setPrice(res.data))
+  function onFormSubmit(event) {
+    event.preventDefault()
+    console.log(inputs)
+    axios.post('http://localhost:8000/price_estimate', inputs)
+    .then(res => {
+      console.log(res.data)
+      var priceTag = document.getElementsByName('price')[0]
+      priceTag.innerHTML = res.data
+    })
     .catch(err => console.log(err))
   }
 
+  function onInputChange(event) {
+    setInputs({...inputs, [event.target.name]: event.target.value})
+  }
+
   return (
-    <div className='grid items-center justify-center font-[Poppins] text-xl pt-5 px-[5%]'>
-      <form onSubmit={handleSubmit} className='grid grid-cols-2 gap-4 items-center justify-center mx-5'>
-        <div>
-          <label for='land' className='mb-2 mt-7 text-violet-200 font-extrabold'>Land size (square feet)</label>
-          <input id='land' onChange={(e) => setLandSize(e.target.value)} type='number' className='outline-none bg-sky-50 p-2 w-full h-full rounded-lg shadow-xl' required></input>
+    <div className='px-56 pt-36'>
+      <form onSubmit={onFormSubmit}>
+        <div className='bg-slate-100 p-3 border-2 rounded-xl shadow-xl'>
+          <span className='text-2xl font-semibold'>House Info Form</span>
+          <hr className='mt-3'></hr>
+          {/* INPUTS */}
+          <div className='grid gap-4 grid-cols-3 grid-rows-3'>
+            <div className='m-3'>
+              <label htmlFor='bedrooms' className='text-lg font-semibold'>Bedrooms</label>
+              <input name='bedrooms' type='number' min={1} onChange={onInputChange} className='w-full text-left p-2 rounded-lg' placeholder='e.g. 2' required></input>
+            </div>
+            <div className='m-3'>
+              <label htmlFor='bathrooms' className='text-lg font-semibold'>Bathrooms</label>
+              <input name='bathrooms' type='number' min={1} onChange={onInputChange} className='w-full text-left p-2 rounded-lg' placeholder='e.g. 2' required></input>
+            </div>
+            <div className='m-3'>
+              <label htmlFor='floors' className='text-lg font-semibold'>Floors</label>
+              <input name='floors' type='number' min={1} onChange={onInputChange} className='w-full text-left p-2 rounded-lg' placeholder='e.g. 1' required></input>
+            </div>
+            <div className='m-3'>
+              <label htmlFor='waterfront' className='text-lg font-semibold'>Waterfront</label>
+              <select name='waterfront' onChange={onInputChange} className='w-full text-left p-2 rounded-lg' defaultValue={''} required>
+                <option value={''} disabled>Choose an option</option>
+                <option value={1}>Yes</option>
+                <option value={0}>No</option>
+              </select>
+            </div>
+            <div className='m-3'>
+              <label htmlFor='condition' className='text-lg font-semibold'>Condition</label>
+              <input name='condition' type='number' min={1} max={5} onChange={onInputChange} className='w-full text-left p-2 rounded-lg' placeholder='Values range from 1 to 5' required></input>
+            </div>
+            <div className='m-3'>
+              <label htmlFor='grade' className='text-lg font-semibold'>Grade</label>
+              <input name='grade' type='number' min={1} max={10} onChange={onInputChange} className='w-full text-left p-2 rounded-lg' placeholder='Values range from 1 to 10' required></input>
+            </div>
+            <div className='m-3'>
+              <label htmlFor='sqft_living' className='text-lg font-semibold'>Living Area</label>
+              <input name='sqft_living' type='number' min={600} onChange={onInputChange} className='w-full text-left p-2 rounded-lg' placeholder='e.g. 5000' required></input>
+            </div>
+            <div className='m-3'>
+              <label htmlFor='sqft_lot' className='text-lg font-semibold'>House Size</label>
+              <input name='sqft_lot' type='number' min={1600} onChange={onInputChange} className='w-full text-left p-2 rounded-lg' placeholder='e.g. 1800' required></input>
+            </div>
+            <div className='m-3'>
+              <label htmlFor='sqft_basement' className='text-lg font-semibold'>Basement Size</label>
+              <input name='sqft_basement' type='number' min={0} onChange={onInputChange} className='w-full text-left p-2 rounded-lg' placeholder='e.g. 0' required></input>
+            </div>
+          </div>
         </div>
-
-        <div>
-          <label for='house' className='mb-2 mt-7 text-violet-200 font-extrabold'>Home size (square feet)</label>
-          <input id='house' onChange={(e) => setHouseSize(e.target.value)} type='number' className='outline-none bg-sky-50 p-2 w-full h-full rounded-lg shadow-xl' required></input>
-        </div>
-
-        <div>
-          <label for='bed' className='mb-2 mt-7 text-violet-200 font-extrabold'>Bedroom(s)</label>
-          <input id='bed' onChange={(e) => setBed(e.target.value)} type='number' className='outline-none bg-sky-50 p-2 w-full h-full rounded-lg shadow-xl' required></input>
-        </div>
-
-        <div>
-          <label for='bath' className='mb-2 mt-7 text-violet-200 font-extrabold'>Bathroom(s)</label>
-          <input id='bath' onChange={(e) => setBath(e.target.value)} type='number' className='outline-none bg-sky-50 p-2 w-full h-full rounded-lg shadow-xl' required></input>
-        </div>
-
-        <div>
-          <label for='city' className='mb-2 mt-7 text-violet-200 font-extrabold'>City</label>
-          <select id='city' onChange={(e) => setCity(e.target.value)} className='outline-none bg-sky-50 p-2 w-full h-full rounded-lg shadow-xl' required>
-            <option value="" selected disabled>--Select--</option>
-            {city_cols.map(col => (
-              <option value={col}>{col}</option>
-            ))}
-            <option value="Other">Other</option>
-          </select>
-        </div>
-
-        <div className='col-span-2 text-center'>
-          <button type='submit' className='w-fit px-4 py-1 outline-none my-5 border-2 rounded-lg bg-orange-200 border-orange-200 hover:bg-orange-300 hover:border-orange-300 shadow-xl'>Estimate Price</button>
+        {/* BUTTON GROUP */}
+        <div className='text-right m-2'>
+          <button type='reset' className='bg-black text-white mx-1 p-3 w-28 rounded-xl shadow-xl'>Clear</button>
+          <button type='submit' className='bg-black text-white mx-1 p-3 w-28 rounded-xl shadow-xl'>Estimate</button>
         </div>
       </form>
-      <input value={price} className='w-fit outline-none mt-5 mx-auto p-1 rounded-lg text-center font-extrabold bg-gradient-to-r from-indigo-300 via-sky-500 to-emerald-300 shadow-xl' disabled></input>
+      <br></br>
+      <div className='bg-slate-100 text-center h-20 w-56 py-3 px-2 mx-auto border-2 rounded-xl shadow-xl' placeholder='Estimated Price'>
+        <label htmlFor='price' className='text-lg font-semibold'>Estimated Price</label><hr className='border-none h-[1px] bg-black'></hr>
+        <span name='price' className='text-lg text-sky-600 font-extrabold'></span>
+      </div>
     </div>
   )
 }
