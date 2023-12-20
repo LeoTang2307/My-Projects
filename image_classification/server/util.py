@@ -48,7 +48,7 @@ def face_and_eyes_detection(input):
             eyes = eyes_cascade.detectMultiScale(roi_gray,1.3,5)
             # If eyes give (), then len(eyes) cannot be executed
             try:
-                if faces == ():
+                if eyes == ():
                     continue
             except:
                 pass
